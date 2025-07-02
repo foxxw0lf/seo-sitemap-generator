@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Sitemap Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        .form-section {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+        }
+        .form-section h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .btn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .preview-section {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+        }
+        .google-preview {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .site-icon {
+            width: 28px;
+            height: 28px;
+            background: #4285f4;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+            vertical-align: middle;
+        }
+        .site-title {
+            color: #1a0dab;
+            font-size: 18px;
+            text-decoration: none;
+            font-weight: normal;
+            display: inline;
+        }
+        .site-url {
+            color: #006621;
+            font-size: 14px;
+            margin: 4px 0;
+        }
+        .site-description {
+            color: #545454;
+            font-size: 14px;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+        .sitemap-links {
+            border-left: 2px solid #4285f4;
+            padding-left: 15px;
+        }
+        .sitemap-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .sitemap-item:hover {
+            background-color: #f8f9fa;
+        }
+        .sitemap-item:last-child {
+            border-bottom: none;
+        }
+        .sitemap-title {
+            color: #1a0dab;
+            font-size: 14px;
+            font-weight: normal;
+            text-decoration: none;
+            flex: 1;
+        }
+        .sitemap-description {
+            color: #545454;
+            font-size: 13px;
+            display: block;
+            margin-top: 2px;
+        }
+        .arrow {
+            color: #70757a;
+            margin-left: 10px;
+        }
+        .more-link {
+            color: #1a0dab;
+            font-size: 14px;
+            text-decoration: none;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        .output-section {
+            grid-column: 1 / -1;
+            background: #1a202c;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        .output-section h3 {
+            color: #e2e8f0;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        .code-output {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        .code-container {
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        #downloadXmlBtn {
+             background: linear-gradient(135deg, #18D2B4 0%, #00B195 100%);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 2rem;
+            }
+            .header p {
+                font-size: 1rem;
+            }
+        }
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 SEO Sitemap Generator</h1>
+            <p>Buat sitemap SEO yang menarik seperti rich snippets Google</p>
+        </div>
+
+        <div class="main-content">
+            <div class="form-section">
+                <h2>
+                    ⚙️ Pengaturan Website
+                </h2>
+                
+                <div class="form-group">
+                    <label for="siteTitle">Judul Website:</label>
+                    <input type="text" id="siteTitle" placeholder="Contoh: Jasa Desain Grafis" value="">
+                </div>
+
+                <div class="form-group">
+                    <label for="siteUrl">URL Website:</label>
+                    <input type="text" id="siteUrl" placeholder="https://websiteanda.com" value="">
+                </div>
+
+                <div class="form-group">
+                    <label for="siteDescription">Deskripsi Website:</label>
+                    <textarea id="siteDescription" placeholder="Jelaskan tentang website Anda..."></textarea>
+                </div>
+
+                <h2 style="margin-top: 30px;">
+                    📄 Halaman Website
+                </h2>
+
+                <div id="pagesContainer">
+                    <div class="page-item" data-index="0">
+                        <div class="form-group">
+                            <label>Judul Halaman:</label>
+                            <input type="text" class="page-title" placeholder="Tentang Kami" value="">
+                        </div>
+                        <div class="form-group">
+                            <label>URL/Slug Halaman:</label>
+                            <input type="text" class="page-url" placeholder="tentang-kami" value="">
+                        </div>
+                        <div class="form-group">
+                            <label>Deskripsi Halaman:</label>
+                            <input type="text" class="page-desc" placeholder="Sejarah singkat perusahaan..." value="">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="btn" onclick="addPage()">+ Tambah Halaman</button>
+            </div>
+
+            <div class="preview-section">
+                <h2>👁️ Preview Google Search</h2>
+                <div class="google-preview" id="googlePreview">
+                    </div>
+            </div>
+        </div>
+
+        <div class="output-section">
+            <h3>💻 Kode HTML & XML untuk Website Anda</h3>
+            <div class="code-container">
+                <button class="copy-btn" onclick="copyCode()">📋 Copy</button>
+                <div class="code-output" id="codeOutput">
+                    </div>
+            </div>
+             <button type="button" class="btn" id="downloadXmlBtn">📥 Download Sitemap.xml</button>
+        </div>
+    </div>
+
+    <script>
+        let pageCount = 1;
+
+        function addPage() {
+            const container = document.getElementById('pagesContainer');
+            const pageDiv = document.createElement('div');
+            pageDiv.className = 'page-item';
+            pageDiv.setAttribute('data-index', pageCount);
+            
+            pageDiv.innerHTML = `
+                <div class="form-group">
+                    <label>Judul Halaman:</label>
+                    <input type="text" class="page-title" placeholder="Judul halaman baru">
+                </div>
+                <div class="form-group">
+                    <label>URL/Slug Halaman:</label>
+                    <input type="text" class="page-url" placeholder="url-halaman-baru">
+                </div>
+                <div class="form-group">
+                    <label>Deskripsi Halaman:</label>
+                    <input type="text" class="page-desc" placeholder="Deskripsi singkat halaman">
+                </div>
+                <button type="button" class="btn" style="background: #e53e3e;" onclick="removePage(${pageCount})">🗑️ Hapus</button>
+            `;
+            
+            container.appendChild(pageDiv);
+            pageCount++;
+            generatePreview();
+        }
+
+        function removePage(index) {
+            const pageItem = document.querySelector(`[data-index="${index}"]`);
+            if (pageItem) {
+                pageItem.remove();
+                generatePreview();
+            }
+        }
+
+        function generatePreview() {
+            const siteTitle = document.getElementById('siteTitle').value || 'Judul Website';
+            const siteUrl = document.getElementById('siteUrl').value || 'https://websiteanda.com';
+            const siteDescription = document.getElementById('siteDescription').value || 'Deskripsi website Anda akan muncul di sini.';
+            
+            const pages = [];
+            document.querySelectorAll('.page-item').forEach(item => {
+                const title = item.querySelector('.page-title').value;
+                const url = item.querySelector('.page-url').value;
+                const desc = item.querySelector('.page-desc').value;
+                if (title) {
+                    pages.push({ title, url, desc });
+                }
+            });
+
+            let pagesHTML = '';
+            pages.slice(0, 4).forEach(page => { // Show max 4 links in preview
+                pagesHTML += `
+                    <div class="sitemap-item">
+                        <div style="flex: 1;">
+                            <a href="#" class="sitemap-title">${page.title}</a>
+                            <span class="sitemap-description">${page.desc || 'Deskripsi halaman...'}</span>
+                        </div>
+                        <span class="arrow">›</span>
+                    </div>
+                `;
+            });
+
+            const cleanUrl = siteUrl.replace('https://', '').replace('http://', '');
+            
+            const preview = `
+                <div class="site-icon">${siteTitle.charAt(0).toUpperCase() || 'W'}</div>
+                <a href="#" class="site-title">${siteTitle}</a>
+                <div class="site-url">${siteUrl}</div>
+                <div class="site-description">${siteDescription}</div>
+                ${pages.length > 0 ? `
+                    <div class="sitemap-links">
+                        ${pagesHTML}
+                        <a href="#" class="more-link">Telusuri lainnya dari ${cleanUrl} ›</a>
+                    </div>
+                ` : ''}
+            `;
+
+            document.getElementById('googlePreview').innerHTML = preview;
+            generateCode();
+        }
+
+        function generateCode() {
+            const siteTitle = document.getElementById('siteTitle').value || 'Judul Website';
+            const siteUrl = document.getElementById('siteUrl').value || 'https://websiteanda.com';
+            const siteDescription = document.getElementById('siteDescription').value || 'Deskripsi website Anda.';
+            
+            const pages = [];
+            document.querySelectorAll('.page-item').forEach(item => {
+                const title = item.querySelector('.page-title').value;
+                const url = item.querySelector('.page-url').value;
+                const desc = item.querySelector('.page-desc').value;
+                if (title) {
+                    pages.push({ title, url, desc });
+                }
+            });
+            
+            // --- Generate only XML Sitemap ---
+            const getXmlSitemap = () => {
+                let sitemapItems = '';
+                pages.forEach(page => {
+                    const pageUrl = page.url || page.title.toLowerCase().replace(/\s+/g, '-');
+                    sitemapItems += `
+    <url>
+        <loc>${siteUrl}/${pageUrl}</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>`;
+                });
+
+                return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>${siteUrl}/</loc>
+        <lastmod>${new Date().toISOString().split('T')[0]}</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>${sitemapItems}
+</urlset>`;
+            };
+
+            const fullCode = `<meta name="description" content="${siteDescription}">
+<meta name="keywords" content="${pages.map(p => p.title).join(', ')}">
+
+${getXmlSitemap()}
+`;
+            
+            document.getElementById('codeOutput').textContent = fullCode;
+            window.sitemapContent = getXmlSitemap(); // Store XML content globally for download
+        }
+
+        function copyCode() {
+            const codeOutput = document.getElementById('codeOutput');
+            navigator.clipboard.writeText(codeOutput.textContent).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copied!';
+                setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+            }).catch(err => console.error('Error copying code: ', err));
+        }
+        
+        function downloadXml() {
+            if (!window.sitemapContent) {
+                alert('Silakan isi data website terlebih dahulu untuk membuat sitemap.');
+                return;
+            }
+            const blob = new Blob([window.sitemapContent], { type: 'text/xml' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'sitemap.xml';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            generatePreview();
+            document.getElementById('downloadXmlBtn').addEventListener('click', downloadXml);
+        });
+
+        document.querySelector('.container').addEventListener('input', (e) => {
+            if (e.target.matches('input, textarea')) {
+                generatePreview();
+            }
+        });
+    </script>
+</body>
+</html>
